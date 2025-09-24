@@ -1,144 +1,24 @@
-// получаем окно чата, поле для воода сообщения, кнопки отправки текста и геолокации
-const chatBox = document.getElementById("chat-box");
-const messageInput = document.getElementById("message-input");
-const sendButton = document.getElementById("send-button");
-const geolocationButton = document.getElementById("geolocation-button");
+  const button = document.getElementById('toggleIconBtn');
+  const iconContainer = document.getElementById('icon');
 
-const wsUrl = "wss://echo.websocket.org/";
-// const wsUrl = 'wss://echo-ws-service.herokuapp.com/'; вебсокет по ссылке из ТЗ не работает, поэтому используется другой
-let websocket;
+  // SVG коды иконок
+  const icon1 = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-left-circle" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-5.904-2.854a.5.5 0 1 1 .707.708L6.707 9.95h2.768a.5.5 0 1 1 0 1H5.5a.5.5 0 0 1-.5-.5V6.475a.5.5 0 1 1 1 0v2.768z"/>
+</svg>`;
 
-// функция для добавления сообщений в чат
-function addMessage(text, type) {
-  const messageElement = document.createElement("div");
+  const icon2 = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-left-circle-fill" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-5.904-2.803a.5.5 0 1 1 .707.707L6.707 10h2.768a.5.5 0 0 1 0 1H5.5a.5.5 0 0 1-.5-.5V6.525a.5.5 0 0 1 1 0v2.768z"/>
+</svg>`;
 
-  if (type === "geolocation") {
-    // обработка геолокации: делим геолокацию на долготу и ширину, затем создаем ссылку и записываем туда данные, потом добавляем ссылку в див
-    const parts = text.split(" ");
-    if (parts.length >= 2) {
-      const lat = parseFloat(parts[0]);
-      const lon = parseFloat(parts[1]);
-      if (!isNaN(lat) && !isNaN(lon)) {
-        const link = document.createElement("a");
-        link.href = `https://www.openstreetmap.org/?lat=${lat}&lon=${lon}&zoom=15&layers=M`;
-        link.textContent = `Ваша геолокация: ${lat}, ${lon}`;
-        link.classList.add("geolocation-link");
-        link.target = "_blank";
-        messageElement.appendChild(link);
-      } else {
-        messageElement.textContent = "Не удалось сформировать ссылку на карту.";
-      }
+  // переменная для отслеживания текущей иконки
+  let isIcon1 = true;
+
+  // обработчик клика
+  button.addEventListener('click', () => {
+    if (isIcon1) {
+      iconContainer.innerHTML = icon2;
     } else {
-      messageElement.textContent = "Неверный формат геолокации.";
+      iconContainer.innerHTML = icon1;
     }
-    messageElement.classList.add("user-message");
-  } else if (type === "user") {
-    //здесь распределяем собщения на серверные и пользовательские для стилизации
-    messageElement.textContent = text;
-    messageElement.classList.add("user-message");
-  } else {
-    messageElement.textContent = text;
-    messageElement.classList.add("server-message");
-  }
-
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight; // автоматическая прокрутка вниз
-}
-
-// инициализация WebSocket соединения
-function connectWebSocket() {
-  websocket = new WebSocket(wsUrl);
-
-  websocket.onopen = function (event) {
-    console.log("WebSocket соединение установлено.");
-    addMessage("Вы подключены к эхо-серверу.", "server");
-  };
-
-  websocket.onmessage = function (event) {
-    //перед отправкой сообщения проверяем является ли оно координатами
-    const messageData = event.data.trim();
-    const coordinateRegex = /^-?\d+(\.\d+)? -?\d+(\.\d+)?$/;
-
-    if (!coordinateRegex.test(messageData)) {
-      // если сообщение не похоже на координаты, выводим как серверное
-      addMessage(`Сервер: ${messageData}`, "server");
-    }
-  };
-
-  websocket.onclose = function (event) {
-    if (event.wasClean) {
-      console.log(
-        `Соединение закрыто, код=${event.code} причина=${event.reason}`
-      );
-      addMessage("Соединение с сервером закрыто.", "server");
-    } else {
-      console.error("Соединение прервано.");
-      addMessage(
-        "Соединение с сервером прервано. Попытка переподключения...",
-        "server"
-      );
-    }
-    setTimeout(connectWebSocket, 5000); // попытка переподключения через 5 секунд
-  };
-
-  websocket.onerror = function (error) {
-    console.error("Ошибка WebSocket:", error);
-    addMessage("Ошибка соединения с сервером.", "server");
-  };
-}
-
-// отправка сообщения
-sendButton.addEventListener("click", () => {
-  const message = messageInput.value;
-  //перед отправкой проверяем соединение с вебсокетом
-  if (message && websocket && websocket.readyState === WebSocket.OPEN) {
-    addMessage(`Вы: ${message}`, "user");
-    websocket.send(message);
-    messageInput.value = ""; // после отправки очищаем поле ввода
-  } else if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-    addMessage("Нет активного соединения с сервером.", "server");
-  }
-});
-
-// отправка сообщения с помощью клавиши Enter
-messageInput.addEventListener("keypress", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    sendButton.click();
-  }
-});
-
-// отправка геолокации
-geolocationButton.addEventListener("click", () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        const geolocationString = `${lat} ${lon}`; // формат для эхо-сервера
-
-        // выводим в чат ссылку на OpenStreetMap как сообщение от пользователя
-        addMessage(`${lat}, ${lon}`, "geolocation"); // тип 'geolocation' для стилизации
-
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-          websocket.send(geolocationString);
-        } else {
-          addMessage(
-            "Нет активного соединения с сервером для отправки геолокации.",
-            "server"
-          );
-        }
-      },
-      (error) => {
-        let errorMessage = "Не удалось получить геолокацию. ";
-        console.error(errorMessage, error);
-        addMessage(errorMessage, "server");
-      }
-    );
-  } else {
-    addMessage("Ваш браузер не поддерживает геолокацию.", "server");
-  }
-});
-
-// инициализация при загрузке страницы
-connectWebSocket();
+    isIcon1 = !isIcon1; // переключение состояния
+  });
