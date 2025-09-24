@@ -1,114 +1,15 @@
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #e0f7fa;
-}
+  .icon-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.chat-container {
-  width: 90%;
-  max-width: 600px;
-  height: 80vh;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* обрезаем выходящие элементы */
-}
-
-.chat-box {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto; /* добавляем скролл, если контент не помещается */
-  background-color: #f0f2f5;
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* расстояние между сообщениями */
-}
-
-.chat-box div {
-  padding: 10px 15px;
-  border-radius: 20px; /* овальные края */
-  max-width: 75%; /* ограничиваем ширину сообщения */
-  word-wrap: break-word; /* перенос длинных слов */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.user-message {
-  background-color: #dcf8c6;
-  align-self: flex-end; /* выравнивание по правому краю */
-  border-bottom-right-radius: 5px;
-}
-
-.server-message {
-  background-color: #ffffff;
-  align-self: flex-start; /* выравнивание по левому краю */
-  border-bottom-left-radius: 5px;
-}
-
-.geolocation-link {
-  color: #007bff;
-  text-decoration: underline;
-  font-size: 0.9em;
-}
-
-.geolocation-link:hover {
-  color: #0056b3;
-}
-
-.input-area {
-  display: flex;
-  align-items: center;
-  padding: 15px 20px;
-  background-color: #ffffff;
-  border-top: 1px solid #e0e0e0;
-  gap: 10px; /* расстояние между элементами ввода */
-}
-
-#message-input {
-  flex-grow: 1;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 25px; /* овальные края поля ввода */
-  background-color: #f0f2f5;
-  font-size: 1em;
-  outline: none; /* убираем стандартный outline */
-}
-
-#message-input:focus {
-  border: 1px solid #007bff; /* подсветка при фокусе */
-}
-
-/* стили для кнопок с текстом */
-.send-button-text,
-.geolocation-button-text {
-  padding: 10px 15px;
-  border-radius: 25px; /* овальные края */
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.3s ease;
-}
-
-.send-button-text {
-  background-color: #007bff;
-  color: white;
-}
-
-.send-button-text:hover {
-  background-color: #0056b3;
-}
-
-.geolocation-button-text {
-  background-color: #28a745;
-  color: white;
-}
-
-.geolocation-button-text:hover {
-  background-color: #218838;
-}
+  .icon-button svg {
+    width: 60px;
+    height: 60px;
+    display: block;
+  }
