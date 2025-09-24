@@ -1,0 +1,15 @@
+  .icon-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-button svg {
+    width: 60px;
+    height: 60px;
+    display: block;
+  }
